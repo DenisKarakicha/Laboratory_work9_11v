@@ -1,0 +1,81 @@
+// Laba9-basic.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+#include <time.h>
+#include <iostream>
+using namespace std;
+
+
+char *settime(struct tm* u)
+{
+	//%H:%M:%S
+	char s[100];
+	char* tmp;
+    strftime(s, 100, "%d.%m.%Y , %A , %w , %B , %j", u);
+	tmp = new char[100];
+	strcpy(tmp, s);
+	return(tmp);
+}
+
+
+
+int main()
+{
+	
+	    setlocale(0, "ru");
+		time_t rawtime = time(NULL) ;
+		struct tm* birthday , *nowtime;
+		int year, month, day;
+		char* array , *newarray;
+
+		nowtime = localtime(&rawtime);
+		newarray = settime(nowtime);
+		int temp = nowtime->tm_yday;
+		cout << "Введите год: ";    
+		cin >> year;
+		cout << "Введите месяц: "; 
+		cin >> month;
+		cout << "Введите день: ";   
+		cin >> day;
+
+		birthday = localtime(&rawtime);
+		birthday->tm_year = year - 1900;
+		birthday->tm_mon = month - 1;
+		birthday->tm_mday = day;
+		
+	    mktime(birthday);
+		int temp2 = birthday->tm_yday;
+		array = settime(birthday);
+	    cout << array << endl;
+		cout << newarray;
+		if (temp > temp2)
+		{
+			int result = temp - temp2;
+			cout << endl << "День рождения закончился "<< result <<".д назад (((" << endl;
+		}
+		if(temp2 > temp)
+		{
+			int result = temp2 - temp;
+			cout << endl << "День рождения через " << result << ".д ура!!!" << endl;
+		}
+		if(temp2 == temp)
+		{
+			cout << endl <<"С др бро !!!!";
+
+		}
+		return 0;
+
+
+
+
+
+
+
+
+}
+
