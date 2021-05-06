@@ -1,0 +1,243 @@
+// Laba9-middle.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+#include <time.h>
+#include <string>
+#include <iostream>
+using namespace std;
+
+struct Date
+{
+    int day;
+    int month;
+    int year;
+    bool isCorrect();
+};
+
+struct Time
+{
+    int hour;
+    int min;
+
+};
+
+struct poster
+{
+    string namecinema;
+    Date data;
+    string namefilm;
+    string genre; 
+    Time timestart;
+    int duration;
+    void readinfo();
+    void infofilm();
+    void infofilmweekend();
+   
+};
+
+
+bool Date::isCorrect()
+{
+    bool result = false;
+
+    if (month > 0 && month <= 12 && year <= 2021)
+    {
+        switch (month)
+        {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+        {
+            if ((day <= 31) && (day > 0))
+                result = true;
+            break;
+        }
+
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+        {
+            if ((day <= 30) && (day > 0))
+                result = true;
+            break;
+        }
+
+        case 2:
+        {
+            if (year % 4 != 0)
+            {
+                if ((day <= 28) && (day > 0))
+                    result = true;
+            }
+            else
+                if (year % 400 == 0)
+                {
+                    if ((day <= 29) && (day > 0))
+                        result = true;
+                }
+                else
+                    if ((year % 100 == 0) && (year % 400 != 0))
+                    {
+                        if ((day == 28) && (day > 0))
+                            result = true;
+                    }
+                    else
+                        if ((year % 4 == 0) && (year % 100 != 0))
+                            if ((day <= 29) && (day > 0))
+                                result = true;
+            break;
+        }
+
+        default:
+            result = false;
+        }
+    }
+    return result;
+}
+
+char* settime(struct tm* u)
+{
+    //%H:%M:%S
+    char s[100];
+    char* tmp;
+    strftime(s, 100, "%H:%M,  %d.%m.%Y ,  %A", u);
+    tmp = new char[100];
+    strcpy(tmp, s);
+    return(tmp);
+}
+
+void poster::infofilmweekend()
+{
+    time_t timer = time(NULL);
+    struct tm* thend;
+    char* temptime;
+    thend = localtime(&timer);
+    thend->tm_year = data.year - 1900;
+    thend->tm_mon = data.month - 1;
+    thend->tm_mday = data.day;
+    thend->tm_hour = timestart.hour;
+    thend->tm_min = timestart.min + duration;
+    mktime(thend);
+    temptime = settime(thend);
+    if (thend->tm_wday == 0 || thend->tm_wday == 6)
+    {
+        cout << endl << "Название кинотеатра: " << namecinema << endl;
+        cout << "Дата киносеанса: " << data.day << "." << data.month << "." << data.year << endl;
+        cout << "Название фильма: " << namefilm << endl;
+        cout << "Жанр: " << genre << endl;
+        cout << "Время начала: " << timestart.hour << ":" << timestart.min << endl;
+        cout << "Длительность в минутах: " << duration << endl;
+        cout << "Сеанс закончиться в : " << temptime;
+    }
+
+}
+
+void poster::infofilm()
+{
+    time_t timer = time(NULL);
+    struct tm* thend;
+    char* temptime;
+    thend = localtime(&timer);
+    thend->tm_year = data.year - 1900;
+    thend->tm_mon = data.month - 1;
+    thend->tm_mday = data.day;
+    thend->tm_hour = timestart.hour;
+    thend->tm_min = timestart.min + duration;
+    mktime(thend);
+    temptime = settime(thend);
+    cout <<endl<< "Название кинотеатра: "<<namecinema<<endl;
+    cout << "Дата киносеанса: " << data.day << "." << data.month << "." << data.year<<endl;
+    cout << "Название фильма: " << namefilm<<endl;
+    cout << "Жанр: " << genre << endl;
+    cout << "Время начала: " << timestart.hour << ":" <<timestart.min<<endl;
+    cout << "Длительность в минутах: " << duration<<endl;
+    cout <<"Сеанс закончиться в : " << temptime;
+    
+}
+
+void poster::readinfo()
+{
+    
+    cout << "Введите название кинотеатра: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, namecinema);
+    do
+    {
+        cout << "Введите дату киносеанса: ";
+        cin.ignore(std::cin.rdbuf()->in_avail());
+        cout << endl;
+        cin >> data.day >> data.month >> data.year;
+
+    } while (!data.isCorrect());
+    
+
+    cout << "Введите название фильма: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, namefilm);
+
+    cout << "Введите жанр фильма: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, genre);
+
+    cout << "Введите время: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    cout << endl;
+    cin >> timestart.hour;
+    cout << ":"<<endl;
+    cin >> timestart.min;
+
+    cout << "Введите длительность в минутах: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    cin >> duration;
+
+
+
+
+
+
+}
+
+int main()
+{
+    setlocale(0, "ru");
+    int q = 0 , count = 0;
+    cout << "Введите количество афиш: ";
+    cin >> q;
+    cout << endl << "Заполните афиши" << endl;
+    poster* movie_show = new poster[q];
+    for (size_t i = 0; i < q; i++)
+    {
+        movie_show[i].readinfo();
+        cout << endl;
+    }
+    cout << "Ваши афиши"<<endl;
+    for (size_t i = 0; i < q; i++)
+    {
+        movie_show[i].infofilm();
+        cout << endl;
+    }
+    cout << endl << "Фильмы выходного для" << endl;
+    for (size_t i = 0; i < q; i++)
+    {
+        movie_show[i].infofilmweekend();
+        cout << endl;
+    }
+ 
+
+
+
+
+
+
+
+}
